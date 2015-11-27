@@ -1,0 +1,11 @@
+* Elm-slides
+** About
+[[http://elm-lang.org][Elm]]-powered self-containing SlideShow
+** Building
+- Install [[http://elm-lang.org/Install.elm][elm-platform]]
+- Build ``elm.js`` with command
+#+BEGIN_SRC shell
+$ elm make Main.elm --output elm.js
+#+END_SRC
+- Open ``slides.html`` with browser
+- PROFIT!
