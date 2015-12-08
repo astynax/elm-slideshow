@@ -8,6 +8,8 @@ import Html            exposing (text, h1, p, pre, code, div, span, button)
 import Html.Attributes exposing (id, style, disabled, class)
 import Html.Events     exposing (onClick)
 
+import Markdown
+
 import StartApp
 
 main : Signal.Signal Html.Html
@@ -47,8 +49,13 @@ view   _ model = text model
 update _ model = model"
               ]
 
-         , slide "Empty" []
+         , slide "Markdown" <:: md """# Title
 
+some code:
+```python
+print "Hello World"
+```
+"""
          , slide "The End" <:: p [] <:: text "Questions?"
          ]
 
@@ -113,6 +120,9 @@ slide header content (idx, count) address =
 
 source : String -> String -> Html.Html
 source hl s = pre [ class "src" ] <:: code [ class hl ] <:: text s
+
+md : String -> Html.Html
+md = Markdown.toElement >> Html.fromElement
 
 infixr 9 <::
 (<::) : (List a -> b) -> a -> b
