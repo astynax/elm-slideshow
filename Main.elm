@@ -1,12 +1,13 @@
 module Main where
 
+import Effects         exposing (Effects)
 import Keyboard
-import Signal exposing (Address)
+import Signal          exposing (Address)
 
-import Effects exposing (Effects)
-import Html exposing (text, h1, p, pre, code, div, span, button)
+import Html            exposing (text, h1, p, pre, code, div, span, button)
 import Html.Attributes exposing (id, style, disabled, class)
-import Html.Events exposing (onClick)
+import Html.Events     exposing (onClick)
+
 import StartApp
 
 main : Signal.Signal Html.Html
