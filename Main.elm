@@ -3,12 +3,13 @@ module Main where
 import Keyboard
 import Signal exposing (Address)
 
-import Effects
+import Effects exposing (Effects)
 import Html exposing (text, h1, p, pre, code, div, span, button)
 import Html.Attributes exposing (id, style, disabled, class)
 import Html.Events exposing (onClick)
 import StartApp
 
+main : Signal.Signal Html.Html
 main =
   .html
   <| StartApp.start { init   = (init slides, Effects.none)
@@ -21,6 +22,7 @@ type Action = Forward
             | Backward
 
 type alias Slide = Address (Maybe.Maybe Action) -> Html.Html
+type alias UnindexedSlide = (Int, Int) -> Slide
 type alias Model = (List Slide, List Slide)
 
 slides : List ((Int, Int) -> Slide)
@@ -49,17 +51,20 @@ update _ model = model"
          , slide "The End" <:: p [] <:: text "Questions?"
          ]
 
+init : List UnindexedSlide -> Model
 init slides =
   let count = List.length slides
   in  slides
     |> List.indexedMap (\idx s -> s (idx + 1, count))
     |> (flip (,) [])
 
+view : Address (Maybe Action) -> Model -> Html.Html
 view address model =
   case model of
     ((s :: _), _) -> s address
     _             -> text "Oops!"
 
+update : Maybe Action -> Model -> (Model, Effects a)
 update action model =
   ( case (action, model) of
       (Just Forward,  ((s :: s' :: rest), prev)) ->
@@ -86,7 +91,7 @@ leftRight =
 
 -- view helpers
 
-slide : String -> List Html.Html -> (Int, Int) -> Slide
+slide : String -> List Html.Html -> UnindexedSlide
 slide header content (idx, count) address =
   let navButton active label action =
         button [ style [("cursor", "pointer")]
@@ -105,7 +110,9 @@ slide header content (idx, count) address =
           ]
         ]
 
+source : String -> String -> Html.Html
 source hl s = pre [ class "src" ] <:: code [ class hl ] <:: text s
 
 infixr 9 <::
+(<::) : (List a -> b) -> a -> b
 (<::) f x = f [ x ]
