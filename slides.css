@@ -38,13 +38,12 @@ body {
     padding: 10px;
     font-size: 120%;
     vertical-align: middle;
-    text-align: center;
 }
 
-.content .title {
-    max-width: 400px;
-    font-size: 150%;
+.title .content {
+    font-size: 130%;
     font-weight: bold;
+    text-align: center;
 }
 
 .content pre {

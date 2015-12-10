@@ -4,11 +4,9 @@ import Effects exposing (Effects)
 import Keyboard
 import Signal exposing (Address, Signal)
 
-import Html exposing (Html, text, a, p, pre, code, div, span)
-import Html.Attributes exposing (id, style, class, href)
+import Html exposing (Html, text, a, p, pre, code, div, span, img, br)
+import Html.Attributes exposing (class, href, src)
 import Html.Events exposing (onClick)
-
-import Markdown
 
 import StartApp exposing (App, start)
 
@@ -30,7 +28,15 @@ type alias UnindexedSlide = (Int, Int) -> Slide
 type alias Model = (List Slide, List Slide)
 
 slides : List UnindexedSlide
-slides = [ slide "Welcome!"
+slides = [ title <| slide ""
+           [ text "Разработка", nl
+           , text "интерактивных", nl
+           , text "Web-приложений", nl
+           , text "на языке", nl
+           , text "Elm", nl
+           , img [ src "elm.png" ] []
+           ]
+         , slide "Welcome!"
            [ text "Some code:"
            , source "elm" "-- simpliest Elm-app
 import Html exposing (text)
@@ -49,7 +55,7 @@ view   _ model = text model
 update _ model = model"
                        ]
 
-         , slide "The End" <:: title "Questions?"
+         , title <| slide "The End" <:: text "Questions?"
          ]
 
 init : List UnindexedSlide -> Model
@@ -122,9 +128,11 @@ slide header content (idx, count) address =
             ]
           ]
 
-title : String -> Html
-title  s =
-  span [ class "title" ] [ text s ]
+title : UnindexedSlide -> UnindexedSlide
+title s i a = div [ class "title" ] [ s i a ]
+
+nl : Html
+nl = br [] []
 
 source : String -> String -> Html
 source hl s = pre [ class "src" ] <:: code [ class hl ] <:: text s
@@ -133,6 +141,3 @@ source hl s = pre [ class "src" ] <:: code [ class hl ] <:: text s
 infixr 9 <::
 (<::) : (List a -> b) -> a -> b
 (<::) f x = f [ x ]
-
-(=>) : a -> b -> (a, b)
-(=>) = (,)
