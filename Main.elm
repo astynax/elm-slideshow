@@ -1,25 +1,26 @@
 module Main where
 
-import Effects         exposing (Effects)
+import Effects exposing (Effects)
 import Keyboard
-import Signal          exposing (Address)
+import Signal exposing (Address, Signal)
 
-import Html            exposing (text, h1, p, pre, code, div, span, button)
-import Html.Attributes exposing (id, style, disabled, class)
-import Html.Events     exposing (onClick)
+import Html exposing (Html, text, a, p, pre, code, div, span)
+import Html.Attributes exposing (id, style, class, href)
+import Html.Events exposing (onClick)
 
 import Markdown
 
-import StartApp
+import StartApp exposing (App, start)
 
-main : Signal.Signal Html.Html
-main =
-  .html
-  <| StartApp.start { init   = (init slides, Effects.none)
-                    , view   = view
-                    , update = update
-                    , inputs = [ leftRight ]
-                    }
+main : Signal Html
+main = app.html
+
+app : App Model
+app = StartApp.start { init = (init slides, Effects.none)
+                     , view = view
+                     , update = update
+                     , inputs = [ leftRight ]
+                     }
 
 type Action = Forward
             | Backward
@@ -28,11 +29,10 @@ type alias Slide = Address (Maybe.Maybe Action) -> Html.Html
 type alias UnindexedSlide = (Int, Int) -> Slide
 type alias Model = (List Slide, List Slide)
 
-slides : List ((Int, Int) -> Slide)
+slides : List UnindexedSlide
 slides = [ slide "Welcome!"
-           <:: p []
-              [ text "Some code:"
-              , source "elm" "-- simpliest Elm-app
+           [ text "Some code:"
+           , source "elm" "-- simpliest Elm-app
 import Html exposing (text)
 import SimpleApp.Simple as Simple
 
@@ -47,39 +47,36 @@ model          = \"Hello World!\"
 view   _ model = text model
 
 update _ model = model"
-              ]
+                       ]
 
-         , slide "Markdown" <:: md """# Title
-
-some code:
-```python
-print "Hello World"
-```
-"""
-         , slide "The End" <:: p [] <:: text "Questions?"
+         , slide "The End" <:: title "Questions?"
          ]
 
 init : List UnindexedSlide -> Model
 init slides =
-  let count = List.length slides
-  in  slides
-    |> List.indexedMap (\idx s -> s (idx + 1, count))
-    |> (flip (,) [])
+  let
+    count = List.length slides
+  in
+    ( slides
+        |> List.indexedMap (\idx s -> s (idx + 1, count))
+    , []
+    )
 
 view : Address (Maybe Action) -> Model -> Html.Html
 view address model =
   case model of
     ((s :: _), _) -> s address
-    _             -> text "Oops!"
+    _ -> text "Oops!"
+
 
 update : Maybe Action -> Model -> (Model, Effects a)
 update action model =
   ( case (action, model) of
-      (Just Forward,  ((s :: s' :: rest), prev)) ->
+      (Just Forward, ((s :: s' :: rest), prev)) ->
         (s' :: rest, s :: prev)
 
       (Just Backward, (rest, (s :: prev))) ->
-        (s  :: rest,      prev)
+        (s :: rest, prev)
 
       _ -> model
   , Effects.none
@@ -87,7 +84,7 @@ update action model =
 
 -- input
 
-leftRight : Signal.Signal (Maybe.Maybe Action)
+leftRight : Signal (Maybe Action)
 leftRight =
   Keyboard.arrows
     |> Signal.map (\ev ->
@@ -99,31 +96,43 @@ leftRight =
 
 -- view helpers
 
-slide : String -> List Html.Html -> UnindexedSlide
+slide : String -> List Html -> UnindexedSlide
 slide header content (idx, count) address =
-  let navButton active label action =
-        button [ style [("cursor", "pointer")]
-               , onClick address action
-               , disabled <| not active
-               ] [ text label ]
-  in  div [ id "slide" ]
-        [ h1 [ id "header" ] <:: text header
-        , div [ id "content" ] content
-        , div [ id "navigation" ]
-          [ navButton (idx > 1)     "<<" <| Just Backward
-          , text <| toString idx
-          , text "/"
-          , text <| toString count
-          , navButton (idx < count) ">>" <| Just Forward
+  let
+    navButton active label action =
+      a (List.append
+               [ href "#" ]
+               (if active
+                then [ class "nav-btn"
+                     , onClick address action ]
+                else [ class "nav-btn disabled" ]
+               )
+        ) [ text label ]
+  in
+    div [ class "slide"
+        ] [ div [ class "header" ] <:: text header
+          , div [ class "frame" ] [ div [ class "content" ] content ]
+          , div [ class "nav-bar" ]
+            [ navButton (idx > 1) "<<" (Just Backward)
+            , div [ class "pages" ] [ text <| toString idx
+                                    , text "/"
+                                    , text <| toString count
+                                    ]
+            , navButton (idx < count) ">>" (Just Forward)
+            ]
           ]
-        ]
 
-source : String -> String -> Html.Html
+title : String -> Html
+title  s =
+  span [ class "title" ] [ text s ]
+
+source : String -> String -> Html
 source hl s = pre [ class "src" ] <:: code [ class hl ] <:: text s
 
-md : String -> Html.Html
-md = Markdown.toElement >> Html.fromElement
 
 infixr 9 <::
 (<::) : (List a -> b) -> a -> b
 (<::) f x = f [ x ]
+
+(=>) : a -> b -> (a, b)
+(=>) = (,)

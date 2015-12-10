@@ -1,27 +1,14 @@
 <html>
   <head>
+    <link rel="stylesheet" href="slides.css" type="text/css" media="screen" />
     <script type="text/javascript" src="elm.js"></script>
-    <style type="text/css" media="screen">
-      #navigation {
-      color: white;
-      background: gray;
-      text-align: center;
-      }
-
-      #header {
-      color: yellow;
-      background: gray;
-      text-align: center;
-      }
-
-      #content {
-      height: 600px;
-      }
-    </style>
+    <title>Elm slides</title>
   </head>
   <body>
+    <div id="root"></div>
     <script type="text/javascript">
-      Elm.fullscreen(Elm.Main);
+      var div = document.getElementById('root');
+      Elm.embed(Elm.Main, div);
     </script>
   </body>
 </html>
