@@ -4,7 +4,7 @@ import Effects exposing (Effects)
 import Keyboard
 import Signal exposing (Address, Signal)
 
-import Html exposing (Html, text, a, p, pre, code, div, span, img, br)
+import Html exposing (Html, text, a, p, pre, code, div, span, img, br, ul, li)
 import Html.Attributes exposing (class, href, src)
 import Html.Events exposing (onClick)
 
@@ -36,26 +36,61 @@ slides = [ title <| slide ""
            , text "Elm", nl
            , img [ src "elm.png" ] []
            ]
-         , slide "Welcome!"
-           [ text "Some code:"
-           , source "elm" "-- simpliest Elm-app
-import Html exposing (text)
-import SimpleApp.Simple as Simple
-
-main = Simple.start
-       { model  = model
-       , view   = view
-       , update = update
-       }
-
-model          = \"Hello World!\"
-
-view   _ model = text model
-
-update _ model = model"
-                       ]
-
-         , title <| slide "The End" <:: text "Questions?"
+         , slide "О Elm"
+           [ text "Elm, это"
+           , ul_
+             [ text "Функциональный язык"
+             , text "Строгая статическая типизация"
+             , text "Алгебраические Типы Данных"
+             , text "Компиляция в JavaScript"
+             , text "Нацеленность на построение UI"
+             , text "Контроль над side-эффектами"
+             , text "FRP, Time-travel Debugging, ..."
+             ]
+           ]
+         , slide "Установка"
+           [ source
+             "shell"
+             <| "$ npm install -g elm\n"
+             ++ "$ npm install -g elm-oracle"
+           , ul_ <| List.map
+                   code_
+                   [ "elm-make"
+                   , "elm-package"
+                   , "elm-reactor"
+                   , "elm-repl"
+                   ]
+           ]
+         , slide "Базис"
+           [ ul_
+             [ text "Element"
+             , text "Signal"
+             ]
+           ]
+         , demo
+         , slide "Model-View-Update"
+           [ ul_
+             [ code_ "evancz/start-app"
+             , code_ "evancz/elm-html"
+             , text "SimpleApp, Html"
+             ]
+           ]
+         , demo
+         , slide "Effects"
+           [ ul_
+             [ code_ "evancz/elm-effects"
+             , text "Effects"
+             ]
+           ]
+         , demo
+         , slide "HTTP"
+           [ ul_
+             [ code_ "evancz/elm-http"
+             , text "Http, Task"
+             ]
+           ]
+         , demo
+         , title <| slide "The End" <:: text "Вопросы?"
          ]
 
 init : List UnindexedSlide -> Model
@@ -131,8 +166,17 @@ slide header content (idx, count) address =
 title : UnindexedSlide -> UnindexedSlide
 title s i a = div [ class "title" ] [ s i a ]
 
+demo : UnindexedSlide
+demo = title <| slide "" <:: text "demo"
+
 nl : Html
 nl = br [] []
+
+ul_ : List Html -> Html
+ul_ = ul [] << List.map ((<::) (li []))
+
+code_ : String -> Html
+code_ = (<::) (code []) << text
 
 source : String -> String -> Html
 source hl s = pre [ class "src" ] <:: code [ class hl ] <:: text s

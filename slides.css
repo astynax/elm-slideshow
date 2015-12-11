@@ -52,6 +52,11 @@ body {
     text-align: left;
 }
 
+.content code {
+    font-size: 130%;
+    color: #000080;
+}
+
 div.nav-bar {
     display: table-cell;
     vertical-align: middle;
