@@ -19,7 +19,7 @@
 
 - Build the SlideShow:
 #+BEGIN_SRC shell
-  $ elm make Main.elm --output elm.js
+  $ elm-make Main.elm --output elm.js
 #+END_SRC
 
 - Open ~slides.html~ with browser
