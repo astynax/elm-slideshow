@@ -1,4 +1,4 @@
-* Elm-slides
+* Elm-slideshow
 ** About
 [[http://elm-lang.org][Elm]]-powered self-containing SlideShow. Usually it looks like [[https://astynax.github.io/elm-slideshow][this one]].
 
