@@ -1,11 +1,27 @@
 * Elm-slides
 ** About
-[[http://elm-lang.org][Elm]]-powered self-containing SlideShow
+[[http://elm-lang.org][Elm]]-powered self-containing SlideShow. Usually it looks like [[https://astynax.github.io/elm-slideshow][this one]].
+
 ** Building
-- Install [[http://elm-lang.org/Install.elm][elm-platform]]
-- Build ~elm.js~ with command
+- Clone this repository:
 #+BEGIN_SRC shell
-$ elm make Main.elm --output elm.js
+  git clone https://github.com/astynax/elm-slideshow.git
 #+END_SRC
+
+- Install Elm (if you don't have it already):
+#+BEGIN_SRC shell
+  $ npm install -g elm
+#+END_SRC
+
+- Edit ~Main.elm~ and fill your slides.
+
+- Edit ~slides.css~ if you prefer your own style.
+
+- Build the SlideShow:
+#+BEGIN_SRC shell
+  $ elm make Main.elm --output elm.js
+#+END_SRC
+
 - Open ~slides.html~ with browser
+
 - PROFIT!
