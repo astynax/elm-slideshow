@@ -32,7 +32,7 @@ start slides =
   { init = (init slides, Effects.none)
   , view = view
   , update = update
-  , inputs = [ leftRight ]
+  , inputs = [ leftRight, pageUpDown ]
   }
 
 
@@ -42,7 +42,7 @@ init slides =
     count = List.length slides
   in
     ( slides
-        |> List.indexedMap (\idx s -> s (idx + 1, count))
+    |> List.indexedMap (\idx s -> s (idx + 1, count))
     , []
     )
 
@@ -77,7 +77,18 @@ leftRight =
           case (ev.x, ev.y) of
             (-1, 0) -> Just Backward
             (1,  0) -> Just Forward
-            _       -> Nothing
+            _ -> Nothing
+       )
+
+pageUpDown : Signal (Maybe Action)
+pageUpDown =
+  Keyboard.presses
+    |> Signal.map
+       (\key ->
+          case key of
+            33 -> Just Backward  -- PgUp
+            34 -> Just Forward  -- PgDn
+            _ -> Nothing
        )
 
 -- view helpers
@@ -131,7 +142,10 @@ img_ s = img [ src s ] []
 
 
 source : String -> String -> Html
-source syntax s = pre [ class "src" ] <:: code [ class syntax ] <:: text s
+source syntax s =
+  pre [ class "src" ]
+  <:: code [ class syntax ]
+  <:: text s
 
 
 infixr 9 <::
