@@ -10927,13 +10927,22 @@ Elm.SlideShow.make = function (_elm) {
       return $Maybe.Nothing;
    },
    $Keyboard.arrows);
+   var pageUpDown = A2($Signal.map,
+   function (key) {
+      var _p5 = key;
+      switch (_p5)
+      {case 33: return $Maybe.Just(Backward);
+         case 34: return $Maybe.Just(Forward);
+         default: return $Maybe.Nothing;}
+   },
+   $Keyboard.presses);
    var start = function (slides) {
-      return $StartApp.start({init: {ctor: "_Tuple2",_0: init(slides),_1: $Effects.none},view: view,update: update,inputs: _U.list([leftRight])});
+      return $StartApp.start({init: {ctor: "_Tuple2",_0: init(slides),_1: $Effects.none},view: view,update: update,inputs: _U.list([leftRight,pageUpDown])});
    };
-   var slide = F4(function (header,content,_p5,address) {
-      var _p6 = _p5;
-      var _p8 = _p6._0;
-      var _p7 = _p6._1;
+   var slide = F4(function (header,content,_p6,address) {
+      var _p7 = _p6;
+      var _p9 = _p7._0;
+      var _p8 = _p7._1;
       var navButton = F3(function (active,label,action) {
          return A2($Html.a,
          A2($List.append,
@@ -10948,11 +10957,11 @@ Elm.SlideShow.make = function (_elm) {
               ,A2($Html.div,_U.list([$Html$Attributes.$class("frame")]),_U.list([A2($Html.div,_U.list([$Html$Attributes.$class("content")]),content)]))
               ,A2($Html.div,
               _U.list([$Html$Attributes.$class("nav-bar")]),
-              _U.list([A3(navButton,_U.cmp(_p8,1) > 0,"<<",$Maybe.Just(Backward))
+              _U.list([A3(navButton,_U.cmp(_p9,1) > 0,"<<",$Maybe.Just(Backward))
                       ,A2($Html.div,
                       _U.list([$Html$Attributes.$class("pages")]),
-                      _U.list([$Html.text($Basics.toString(_p8)),$Html.text("/"),$Html.text($Basics.toString(_p7))]))
-                      ,A3(navButton,_U.cmp(_p8,_p7) < 0,">>",$Maybe.Just(Forward))]))]));
+                      _U.list([$Html.text($Basics.toString(_p9)),$Html.text("/"),$Html.text($Basics.toString(_p8))]))
+                      ,A3(navButton,_U.cmp(_p9,_p8) < 0,">>",$Maybe.Just(Forward))]))]));
    });
    return _elm.SlideShow.values = {_op: _op,start: start,slide: slide,title: title,img_: img_,ul_: ul_,code_: code_,nl: nl,source: source};
 };
